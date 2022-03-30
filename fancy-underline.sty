@@ -10,11 +10,11 @@
 \RequirePackage{contour}
 
 \def\ULdepth{.925pt}
-\contourlength{.3pt}
+\contourlength{.35pt}
 \def\fancyulbackground{white}
 
 \def\fancyul@underline#1{%
-   \fancyul@color{\uline{\phantom{#1}}}%
+   {\fancyul@color\uline{\phantom{#1}}}%
    \llap{\contour{\fancyulbackground}{#1}}% TODO: allow to configure background
 }
 
@@ -33,9 +33,9 @@
     \xleaders\hrule\@height\dimexpr\ULthickness-\ULdepth\@depth+\ULdepth\relax
 }
 
-\def\fancyul@everyspace#1{%
-   \fancyul@color{#1\fancyul@leaders\hskip\spaceskip}\null
-}
+\def\fancyul@everyspace#1{\begingroup
+   \fancyul@color#1\fancyul@leaders\hskip\spaceskip\null
+\endgroup}
 
 \def\fancyul@everyhyphen{%
    \setbox\z@=\hbox{\fancyul@underline{\SOUL@setkern\SOUL@hyphkern\SOUL@sethyphenchar}}%
@@ -51,11 +51,11 @@
 }
 
 \let\fancyul@color\relax
-\def\setulcolor#1{%
+\def\fancyulcolor#1{%
     \if$#1$
         \let\fancyul@color\relax
     \else
-        \def\fancyul@color{\textcolor{#1}}%
+        \def\fancyul@color{\color{#1}}%
     \fi
 }
 

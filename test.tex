@@ -2,8 +2,12 @@
 \usepackage{fancy-underline}
 
 \usepackage{xcolor}
-\setulcolor{cyan!80!white}
+\fancyulcolor{cyan!80!white}
+
+\usepackage[hidelinks]{hyperref}
 
 \begin{document}
 \fancyul{Ich bin ein Testtext des mit prächtigen Tiefen und Höhen. Ich Versuche Zudem super lang zu sein um damit auch Textumbrüche veranschaulichen zu können.}
+
+\href{www.google.de}{\fancyul{Beispiel Text}}
 \end{document}
