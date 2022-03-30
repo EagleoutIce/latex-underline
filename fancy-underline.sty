@@ -9,10 +9,11 @@
 
 \def\ULdepth{.925pt}
 \contourlength{.3pt}
+\def\fancyulbackground{white}
 
 \def\fancyul@underline#1{%
    \fancyul@color{\uline{\phantom{#1}}}%
-   \llap{\contour{white}{#1}}% TODO: allow to configure background
+   \llap{\contour{\fancyulbackground}{#1}}% TODO: allow to configure background
 }
 
 \def\fancyul@preamble{%
