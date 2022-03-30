@@ -1,0 +1,99 @@
+% simple package to use soul, ulem and contour to provide amazing underline
+\ProvidesPackage{fancy-underline}[2022/03/22 EagleoutIce - soul, ulem and contour]
+
+% based on textul from soul
+
+\RequirePackage{soulutf8}
+\RequirePackage{ulem}
+\RequirePackage[outline]{contour}
+
+\def\ULdepth{.925pt}
+\contourlength{.3pt}
+
+\def\fancyul@underline#1{%
+   \fancyul@color{\uline{\phantom{#1}}}%
+   \llap{\contour{white}{#1}}% TODO: allow to configure background
+}
+
+\def\fancyul@preamble{%
+   \spaceskip\SOUL@spaceskip
+}
+
+\def\fancyul@everysyllable{%
+    \fancyul@underline{%
+        \the\SOUL@syllable
+        \SOUL@setkern\SOUL@charkern
+    }%
+}
+
+\def\fancyul@leaders{% by inverting the signs of ULdepth we shift it down
+    \xleaders\hrule\@height\dimexpr\ULthickness-\ULdepth\@depth+\ULdepth\relax
+}
+
+\def\fancyul@everyspace#1{%
+   \fancyul@color{#1\fancyul@leaders\hskip\spaceskip}\null
+}
+
+\def\fancyul@everyhyphen{%
+   \setbox\z@=\hbox{\fancyul@underline{\SOUL@setkern\SOUL@hyphkern\SOUL@sethyphenchar}}%
+   \discretionary{\unkern\box\z@}{}{}% clear the box register
+}
+
+\def\fancyul@everyexhyphen#1{%
+    \SOUL@setkern\SOUL@hyphkern
+    \fancyul@underline{#1}%
+    \discretionary{}{}{%
+        \SOUL@setkern\SOUL@charkern
+    }%
+}
+
+\let\fancyul@color\relax
+\def\setulcolor#1{%
+    \if$#1$
+        \let\fancyul@color\relax
+    \else
+        \def\fancyul@color{\textcolor{#1}}%
+    \fi
+}
+
+\def\setuloverlap#1{\def\fancyul@overlap{#1}}
+\setuloverlap{.25pt}
+
+\def\fancyul@setup{%
+    \SOUL@setup
+    \let\SOUL@preamble\fancyul@preamble
+    \let\SOUL@everysyllable\fancyul@everysyllable
+    \let\SOUL@everyspace\fancyul@everyspace
+    \let\SOUL@everyhyphen\fancyul@everyhyphen
+    \let\SOUL@everyexhyphen\fancyul@everyexhyphen
+}
+
+\DeclareRobustCommand*\fancyul{\fancyul@setup\SOUL@}
+
+\def\setul#1#2{%
+    \if$#1$\else\def\fancyul@depth{#1}\fi
+    \if$#2$\else\def\fancyul@thickness{#2}\fi
+}
+
+\def\resetul{\setul{.65ex}{.1ex}}
+\resetul
+
+\def\setuldepth#1{{%
+    \def\SOUL@n{#1}%
+    \setbox\z@\hbox{%
+        \tracinglostchars\z@
+        \ifx\SOUL@n\empty
+            \count@\z@
+            \loop
+                \ifnum\catcode\count@=11\char\count@\fi
+            \ifnum\count@<\@cclv
+                \advance\count@\@ne
+            \repeat
+        \else
+            #1%
+        \fi
+    }%
+    \dimen@\dp\z@
+    \advance\dimen@\p@
+    \xdef\fancyul@depth{\the\dimen@}%
+}}
