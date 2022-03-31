@@ -30,7 +30,7 @@
 }
 
 \def\fancyul@leaders{% by inverting the signs of ULdepth we shift it down
-    \xleaders\hrule\@height\dimexpr\ULthickness-\ULdepth\@depth+\ULdepth\relax
+    \xleaders\hrule\@height\dimexpr\ULthickness-\ULdepth\@depth\ULdepth\relax
 }
 
 \def\fancyul@everyspace#1{\begingroup
