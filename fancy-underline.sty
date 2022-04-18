@@ -13,7 +13,8 @@
 
 \def\fancyul@underline#1{%
    {\fancyul@color\uline{\phantom{#1}}}%
-   \llap{\contour\fancyul@background{#1}}%
+   % mute contour
+   \llap{\let\typeout\@gobble\contour\fancyul@background{#1}}%
 }
 
 \def\fancyul@preamble{%
