@@ -12,7 +12,7 @@
 \def\fancyulbackground{white}
 
 \def\fancyul@underline#1{%
-   {\fancyul@color\uline{\phantom{#1}}}%
+   {\setbox\z@=\hbox{#1}\setbox\@ne=\null\wd\@ne=\wd\z@\ht\@ne=\ht\z@\dp\@ne=\dp\z@\fancyul@color\uline{\box\@ne}}%
    % mute contour
    \llap{\let\typeout\@gobble\contour\fancyul@background{#1}}%
 }
@@ -80,5 +80,5 @@
     \if$#2$\else\def\fancyul@contour{#3}\fi
 }
 
-\def\resetfancyul{\setfancyul{.75pt}{.1ex}{.2pt}}
+\def\resetfancyul{\setfancyul{.825pt}{.1ex}{.2pt}}
 \resetfancyul
