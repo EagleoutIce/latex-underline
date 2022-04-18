@@ -9,13 +9,11 @@
 \PassOptionsToPackage{outline}{contour}
 \RequirePackage{contour}
 
-\def\ULdepth{.925pt}
-\contourlength{.35pt}
 \def\fancyulbackground{white}
 
 \def\fancyul@underline#1{%
    {\fancyul@color\uline{\phantom{#1}}}%
-   \llap{\contour{\fancyulbackground}{#1}}%
+   \llap{\contour\fancyul@background{#1}}%
 }
 
 \def\fancyul@preamble{%
@@ -59,6 +57,7 @@
     \fi
 }
 
+% background color
 \def\fancyul@setup{%
     \SOUL@setup
     \let\SOUL@preamble\fancyul@preamble
@@ -66,34 +65,19 @@
     \let\SOUL@everyspace\fancyul@everyspace
     \let\SOUL@everyhyphen\fancyul@everyhyphen
     \let\SOUL@everyexhyphen\fancyul@everyexhyphen
+    \let\ULdepth\fancyul@depth
+    \let\ULthickness\fancyul@thickness
+    \contourlength{\fancyul@contour}\relax
 }
 
-\DeclareRobustCommand*\fancyul{\fancyul@setup\SOUL@}
+\DeclareRobustCommand*\fancyul[1][\fancyulbackground]{\def\fancyul@background{#1}\fancyul@setup\SOUL@}
 
-\def\setul#1#2{%
+% depth | thickness | contour
+\def\setfancyul#1#2#3{%
     \if$#1$\else\def\fancyul@depth{#1}\fi
     \if$#2$\else\def\fancyul@thickness{#2}\fi
+    \if$#2$\else\def\fancyul@contour{#3}\fi
 }
 
-\def\resetul{\setul{.65ex}{.1ex}}
-\resetul
-
-\def\setuldepth#1{{%
-    \def\SOUL@n{#1}%
-    \setbox\z@\hbox{%
-        \tracinglostchars\z@
-        \ifx\SOUL@n\empty
-            \count@\z@
-            \loop
-                \ifnum\catcode\count@=11\char\count@\fi
-            \ifnum\count@<\@cclv
-                \advance\count@\@ne
-            \repeat
-        \else
-            #1%
-        \fi
-    }%
-    \dimen@\dp\z@
-    \advance\dimen@\p@
-    \xdef\fancyul@depth{\the\dimen@}%
-}}
+\def\resetfancyul{\setfancyul{.75pt}{.1ex}{.2pt}}
+\resetfancyul
