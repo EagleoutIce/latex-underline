@@ -10,14 +10,40 @@
 
 \def\fancyulbackground{white}
 
+% for every character to underline we create the line first and then pop it at the hyphenation point/end (postamble)
+
+\newtoks\fancyul@stack@
+
+\def\fancyul@store@#1{%
+    \global\fancyul@stack@=\expandafter{\the\fancyul@stack@#1}%
+}
+\def\fancyul@contour@#1{\contour\fancyul@background{#1}}
+\def\fancyul@print@content{%
+    \typeout{At: \the\fancyul@stack@}%
+    \llap{\let\typeout\@gobble\null\the\fancyul@stack@}%
+    \global\fancyul@stack@={}%
+}
+
 \def\fancyul@underline#1{%
-    \setbox\z@=\hbox{#1}{\setbox\@ne=\null\wd\@ne=\wd\z@\ht\@ne=\ht\z@\dp\@ne=\dp\z@\fancyul@color\uline{\box\@ne}}%
+    \setbox\z@=\hbox{#1}%
+    {\setbox\@ne=\null\wd\@ne=\wd\z@\ht\@ne=\ht\z@\dp\@ne=\dp\z@\fancyul@color\uline{\box\@ne}}%
     % mute contour
-    \llap{\ifdim\dp\z@>.15\p@\relax\let\typeout\@gobble\contour\fancyul@background{#1}\else#1\fi}%
+    \ifdim\dp\z@>.15\p@\relax
+        \edef\@tmp{\noexpand\fancyul@contour@{#1}}%
+        \expandafter\fancyul@store@\expandafter{\@tmp}%
+    \else
+        \edef\@tmp{#1}%
+        \expandafter\fancyul@store@\expandafter{\@tmp}%
+    \fi
 }
 
 \def\fancyul@preamble{%
+   \fancyul@stack@={}%
    \spaceskip\SOUL@spaceskip
+}
+
+\def\fancyul@postamble{%
+    \fancyul@print@content
 }
 
 \def\fancyul@everytoken{%
@@ -32,19 +58,19 @@
 }
 
 \def\fancyul@everyspace#1{\begingroup
-   \fancyul@color#1\fancyul@leaders\hskip\spaceskip\null
+   \edef\@tmp{#1}%
+   \expandafter\fancyul@store@\expandafter{\expandafter{\expandafter\fancyul@color\@tmp\fancyul@leaders\hskip\spaceskip\null}}%
 \endgroup}
 
 \def\fancyul@everyhyphen{%
    \setbox\z@=\hbox{\fancyul@underline{\SOUL@setkern\SOUL@hyphkern\SOUL@sethyphenchar}}%
-   \discretionary{\unkern\box\z@}{}{}% clear the box register
+   \discretionary{\hbox{\fancyul@print@content}\unkern\box\z@}{}{}% clear the box register
 }
 
 \def\fancyul@everyexhyphen#1{%
-    \SOUL@setkern\SOUL@hyphkern
-    \fancyul@underline{#1}%
+    \fancyul@print@content\fancyul@underline{#1}%
     \discretionary{}{}{%
-        \SOUL@setkern\SOUL@charkern
+        \hbox{\fancyul@store@{\SOUL@setkern\SOUL@charkern}}%
     }%
 }
 
@@ -61,6 +87,7 @@
 \def\fancyul@setup{%
     \SOUL@setup
     \let\SOUL@preamble\fancyul@preamble
+    \let\SOUL@postamble\fancyul@postamble
     \let\SOUL@everysyllable\@empty
     \let\SOUL@everytoken\fancyul@everytoken
     \let\SOUL@everyspace\fancyul@everyspace
