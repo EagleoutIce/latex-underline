@@ -11,18 +11,18 @@
 \def\fancyulbackground{white}
 
 \def\fancyul@underline#1{%
-   {\setbox\z@=\hbox{#1}\setbox\@ne=\null\wd\@ne=\wd\z@\ht\@ne=\ht\z@\dp\@ne=\dp\z@\fancyul@color\uline{\box\@ne}}%
-   % mute contour
-   \llap{\let\typeout\@gobble\contour\fancyul@background{#1}}%
+    \setbox\z@=\hbox{#1}{\setbox\@ne=\null\wd\@ne=\wd\z@\ht\@ne=\ht\z@\dp\@ne=\dp\z@\fancyul@color\uline{\box\@ne}}%
+    % mute contour
+    \llap{\ifdim\dp\z@>.15\p@\relax\let\typeout\@gobble\contour\fancyul@background{#1}\else#1\fi}%
 }
 
 \def\fancyul@preamble{%
    \spaceskip\SOUL@spaceskip
 }
 
-\def\fancyul@everysyllable{%
+\def\fancyul@everytoken{%
     \fancyul@underline{%
-        \the\SOUL@syllable
+        \the\SOUL@token
         \SOUL@setkern\SOUL@charkern
     }%
 }
@@ -61,7 +61,8 @@
 \def\fancyul@setup{%
     \SOUL@setup
     \let\SOUL@preamble\fancyul@preamble
-    \let\SOUL@everysyllable\fancyul@everysyllable
+    \let\SOUL@everysyllable\@empty
+    \let\SOUL@everytoken\fancyul@everytoken
     \let\SOUL@everyspace\fancyul@everyspace
     \let\SOUL@everyhyphen\fancyul@everyhyphen
     \let\SOUL@everyexhyphen\fancyul@everyexhyphen
